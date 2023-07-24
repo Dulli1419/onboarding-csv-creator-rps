@@ -9,9 +9,9 @@
     "@types/google-apps-script": "^1.0.57",
     "install-peerdeps": "^3.0.3"
   },
-  "name": "googleappsscripttemplate",
+  "name": "onboarding-csv-creator-rps",
   "version": "1.0.0",
-  "description": "A blank template to help quickly start new projects in VSCode.  Includes all necessary packages in the package.json (including linter config files and other dev specific files).",
+  "description": "A series of scripts to help expedite the onboarding process for new students at Rutgers Preparatory School.",
   "main": "code.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -20,14 +20,16 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Dulli1419/apps-script-template.git"
+    "url": "git+https://github.com/Dulli1419/onboarding-csv-creator-rps.git"
   },
   "keywords": [
-    "template",
-    "appsscript"
+    "rutgersprep",
+    "blackbaud",
+	"active-directory",
+	"google-sheets"
   ],
   "bugs": {
-    "url": "https://github.com/Dulli1419/apps-script-template/issues"
+    "url": "https://github.com/Dulli1419/onboarding-csv-creator-rps/issues"
   },
-  "homepage": "https://github.com/Dulli1419/apps-script-template#readme"
+  "homepage": "https://github.com/Dulli1419/onboarding-csv-creator-rps#readme"
 }
