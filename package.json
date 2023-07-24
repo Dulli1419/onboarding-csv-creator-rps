@@ -1,0 +1,33 @@
+{
+  "devDependencies": {
+    "eslint": "^8.18.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-googleappsscript": "^1.0.4",
+    "eslint-plugin-import": "^2.26.0"
+  },
+  "dependencies": {
+    "@types/google-apps-script": "^1.0.57",
+    "install-peerdeps": "^3.0.3"
+  },
+  "name": "googleappsscripttemplate",
+  "version": "1.0.0",
+  "description": "A blank template to help quickly start new projects in VSCode.  Includes all necessary packages in the package.json (including linter config files and other dev specific files).",
+  "main": "code.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "M Nardulli",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dulli1419/apps-script-template.git"
+  },
+  "keywords": [
+    "template",
+    "appsscript"
+  ],
+  "bugs": {
+    "url": "https://github.com/Dulli1419/apps-script-template/issues"
+  },
+  "homepage": "https://github.com/Dulli1419/apps-script-template#readme"
+}

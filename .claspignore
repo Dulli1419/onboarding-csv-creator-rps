@@ -1,0 +1,9 @@
+.vscode/**
+.git/**
+**/node_modules/**
+.eslintrc.js
+.gitignore
+zzzimportGAS.js
+package-lock.json
+package.json
+README.md
