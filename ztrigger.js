@@ -4,6 +4,8 @@ function updateAll() {
 
 	const service = ArgoNetAccessLibrary.getService(); // check to see if the user is authenticated to ArgoNet.
 	if (service.hasAccess()) {
+		updateSchoolYear(); // make sure the correct school year is listed in the sheet.
+
 		// while loop ensures that the import finishes before we move on.
 		while (!importComplete) {
 			importComplete = updateStuList(); // update stu list from ArgoNet.

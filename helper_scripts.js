@@ -26,6 +26,21 @@ function clearSheet() {
 	return false; // stop the process and exit the script without making any changes.
 }
 
+function updateSchoolYear() {
+	const ss = SpreadsheetApp.getActiveSpreadsheet();
+	const sheet = ss.getSheetByName('School_Info');
+	const range = sheet.getRange('A2');
+
+	const allYears = ArgoNetAccessLibrary.bbGet('https://api.sky.blackbaud.com/school/v1/years', 0); // get year data from ArgoNet.
+
+	const curYearData = allYears.value.filter((el) => el.current_year); // filter to the current year
+
+	let curYear = curYearData[0].school_year_label;
+	curYear = curYear.replace(/-/g, ' - '); // add spaces around "-" in the year.
+
+	range.setValue(curYear);
+}
+
 // You must create a trigger for this function to execute 'From spreadsheet - On open'.  A simple trigger is not possible because end users do not have persistent authorization to access SKY API.  Using a defined trigger attached to this function allows us to force the onOpen function to be called by googleapi@rutgersprep.org at all times.  Without persistant SKY API access this fails because the functions added to the dropdown require auth to access SKY API.
 function onOpenHandler() {
 	SpreadsheetApp.getUi()
