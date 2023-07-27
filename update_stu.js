@@ -1,9 +1,21 @@
-// This takes the list of student IDs from the "New Students" tab and compares it to the list of IDs already on the "Formatted_w_ID" tab (which is where most of the processing occurs).  It then compares the two lists to determine which IDs don't already exist on the "Formatted_w_ID" tab before copying them over at the bottom of the list.
+// JavaScript Document
+/* eslint-env es6 */
+
+// This updates the list of students on the "Import" tab.
+function updateStuList() {
+	ArgoNetAccessLibrary.getADVList(150265, 0, 0, 0, 'Import'); // update stu list from ArgoNet.
+
+	return true;
+}
+
+// This takes the list of student IDs from the "Needs_Accounts" tab and compares it to the list of IDs already on the "Formatted_w_ID" tab (which is where most of the processing occurs).  It then compares the two lists to determine which IDs don't already exist on the "Formatted_w_ID" tab before copying them over at the bottom of the list.
 function copyForFormatting() {
 	const ss = SpreadsheetApp.getActiveSpreadsheet();
-	const sourceSheet = ss.getSheetByName('New Students');
+	const sourceSheet = ss.getSheetByName('Needs_Accounts');
 	const targetSheet = ss.getSheetByName('Formatted_w_ID');
 	const newIDsFinal = []; // this will be the final array of new IDs.
+
+	targetSheet.activate(); // switch user to 'Formatted_w_ID' tab;
 
 	const sourceRange = sourceSheet.getRange('A2:A'); // student IDs.
 	let allIDs = sourceRange
@@ -32,6 +44,4 @@ function copyForFormatting() {
 	} else {
 		Logger.log('No New Students');
 	}
-
-	updatePass(); // generate temp passwords for the new accounts.
 }

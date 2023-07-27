@@ -1,3 +1,6 @@
+// JavaScript Document
+/* eslint-env es6 */
+
 // generates a random 8 character password that is guaranteed to have at least 1 Upper case, 1 lower case, and 1 number.
 function passGenerator() {
 	// the next 4 variables set the acceptable characters to appear in the final password.  Some characters have been removed because of similarity to other characters (0 vs O), or compatability ("=" was removed because, if it shows up as the first character, Google Sheets will try to interpret the cell as a formula).  Numbers are listed explicitly to ensure they'll be treated as strings.
@@ -37,6 +40,8 @@ function updatePass() {
 	const existingInfo = sourceRange.getValues();
 	const tempPasses = []; // final list of temp passwords.
 
+	sheet.activate(); // switch user to 'Formatted_w_ID' tab;
+
 	// checks state of sheet to make sure we don't overwrite existing passwords.
 	for (let i = 0; i < constantInfo.length; i++) {
 		if (!constantInfo[i][0]) { // if no student ID then we set cell to be blank.
@@ -49,4 +54,5 @@ function updatePass() {
 	}
 
 	sourceRange.setValues(tempPasses); // set all values in the google sheet.
+	sourceRange.setShowHyperlink(false); // hides any accidental links that may be incorrectly detected in passwords that include a "."
 }
