@@ -7,6 +7,7 @@ function clearSheet() {
 	const sheet = ss.getSheetByName('Formatted_w_ID');
 	const stuRange = sheet.getRange('A3:A');
 	const passRange = sheet.getRange('G2:G');
+	const samRange = sheet.getRange('I2:I');
 
 	const ui = SpreadsheetApp.getUi();
 
@@ -18,6 +19,7 @@ function clearSheet() {
 		// User clicked "Yes".
 		stuRange.clearContent();
 		passRange.clearContent();
+		samRange.clearContent();
 
 		return true;
 	}

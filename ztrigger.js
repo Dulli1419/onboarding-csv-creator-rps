@@ -13,6 +13,8 @@ function updateAll() {
 
 		copyForFormatting(); // copy new students to "Formatted_w_ID" for processing.
 		updatePass(); // generate temp passwords for the new accounts.
+		cleanUsernames(); // check usernames for unsupported characters.
+		checkForDupUsernames(1);
 	} else {
 		updateStuList(); // this will only authenticate to ArgoNet and not update the list if the user is not authenticated.  We isolate this because we don't want the other functions to run until the list is properly updated.
 	}
