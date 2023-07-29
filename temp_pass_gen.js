@@ -55,4 +55,6 @@ function updatePass() {
 
 	sourceRange.setValues(tempPasses); // set all values in the google sheet.
 	sourceRange.setShowHyperlink(false); // hides any accidental links that may be incorrectly detected in passwords that include a "."
+
+	return true;
 }

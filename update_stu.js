@@ -44,4 +44,6 @@ function copyForFormatting() {
 	} else {
 		Logger.log('No New Students');
 	}
+
+	return true;
 }

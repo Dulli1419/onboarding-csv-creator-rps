@@ -18,6 +18,8 @@ function cleanUsernames() {
 	});
 
 	finalRange.setValues(samFinal);
+
+	return true;
 }
 
 function checkForDupUsernames(cycle) {
@@ -89,8 +91,4 @@ function checkForDupUsernames(cycle) {
 	} else {
 		Logger.log('All usernames are unique');
 	}
-}
-
-function test() {
-	checkForDupUsernames(1);
 }
