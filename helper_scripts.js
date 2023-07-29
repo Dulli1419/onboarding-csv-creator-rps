@@ -28,6 +28,7 @@ function clearSheet() {
 	return false; // stop the process and exit the script without making any changes.
 }
 
+// this gets the current school year out of ArgoNet and copies it to the sheet for reference.
 function updateSchoolYear() {
 	const ss = SpreadsheetApp.getActiveSpreadsheet();
 	const sheet = ss.getSheetByName('School_Info');
