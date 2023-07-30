@@ -1,20 +1,34 @@
 // JavaScript Document
 /* eslint-env es6 */
 
-// This goes through the sAMAccountNames initially constructed by the spreadsheet and removes and " ", "-", or accented character.  Accented characters are replaced by their non-accented english equivalent. info here - https://stackoverflow.com/questions/70287406/how-to-replace-all-accented-characters-with-english-equivalents
+// This goes through the sAMAccountNames initially constructed by the spreadsheet and removes and " ", "-", or accented character.  Accented characters are replaced by their non-accented english equivalent. info here - https://stackoverflow.com/questions/70287406/how-to-replace-all-accented-characters-with-english-equivalents.  It also checks to see if the user has an already existing username and, if they do, copies that instead of the cleaned up version of the generated username.
 function cleanUsernames() {
 	const ss = SpreadsheetApp.getActiveSpreadsheet();
-	const sheet = ss.getSheetByName('Formatted_w_ID');
-	const initialRange = sheet.getRange('H2:H'); // initial sAMAccount Names.
-	const samInitial = initialRange.getValues().flat(1); // retrieve values and flatten into non-nested array.
-	const finalRange = sheet.getRange('I2:I'); // 'clean' sAMAccount Names.
+	const newSheet = ss.getSheetByName('Formatted_w_ID');
+	const newRange = newSheet.getRange('A2:N'); // all data, exculding headers, on the sheet that holds the new usernames.
+	const newData = newRange.getValues();
+	const finalRange = newSheet.getRange('I2:I'); // 'clean' sAMAccount Names.
 	let samClean = ''; // placeholder for each sAMAccount name being processed.
 	const samFinal = []; // final array to print to the sheet.
 
-	samInitial.forEach((samInt) => {
-		samClean = samInt.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // replace accented characters.
-		samClean = samClean.replace(/[-\s+]/g, ''); // removes '-' and spaces.
-		samFinal.push([samClean]);
+	const importSheet = ss.getSheetByName('Import');
+	const importRange = importSheet.getRange('A2:G'); // all data, exculding headers, on the sheet that holds the existing usernames.
+	const existingUsernames = importRange.getValues();
+	let existingUser; // holds all data for the existing user;
+	let existingUN; // holds just the username for the existing user.
+
+	newData.forEach((samInt) => {
+		if (samInt[13] === 1) { // if user accounts exist
+			[existingUser] = existingUsernames.filter((el) => el[0] === samInt[0]); // search the 'Import' tab for a user with a matching user ID.
+			[, , , , , existingUN] = existingUser; // get the username from the matching user.
+			existingUN = existingUN.replace(/@rutgersprep\.org/g, ''); // remove @rutgersprep.org
+			samFinal.push([existingUN]);
+		} else {
+			samClean = samInt[7].normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // replace accented characters.
+			samClean = samClean.replace(/[-\s+]/g, ''); // removes '-' and spaces.
+
+			samFinal.push([samClean]);
+		}
 	});
 
 	finalRange.setValues(samFinal);
@@ -87,7 +101,8 @@ function checkForDupUsernames() {
 		// this checks each username in the allUNUnique list and checks how many time they exist in the allUNList.  If it's > 1 then there is a duplicate so it adds that username to [duplicateUsernames].
 		allUNUnique.forEach((testUN) => {
 			duplicateCheck = allUNList.filter((el) => el === testUN); // the filtered list, which should be only 1.
-			if (duplicateCheck.length > 1 && !duplicateUsernames.includes(duplicateCheck[0])) { // only push to duplicateUsernames if it doesn't have the entry already.
+			if (duplicateCheck.length > 1 && !duplicateUsernames.includes(duplicateCheck[0])) {
+				// only push to duplicateUsernames if it doesn't have the entry already.
 				duplicateUsernames.push(duplicateCheck[0]);
 			}
 		});
