@@ -1,3 +1,6 @@
+// JavaScript Document
+/* eslint-env es6 */
+
 // This updates the list of students and triggers the rest of the functions to assign them a new temp pass.
 function updateAll() {
 	let importComplete = false;
