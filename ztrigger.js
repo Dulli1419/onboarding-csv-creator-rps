@@ -30,7 +30,7 @@ function updateAll() {
 			cleanComplete = cleanUsernames(); // check usernames for unsupported characters.
 		}
 
-		checkForDupUsernames(1); // check usernames to make sure they are unique across all usernames.
+		checkForDupUsernames(); // check usernames to make sure they are unique across all usernames.
 	} else {
 		updateStuList(); // this will only authenticate to ArgoNet and not update the list if the user is not authenticated.  We isolate this because we don't want the other functions to run until the list is properly updated.
 	}
