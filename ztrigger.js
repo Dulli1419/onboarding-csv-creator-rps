@@ -7,6 +7,7 @@ function updateAll() {
 	let copyComplete = false;
 	let passUpdateComplete = false;
 	let cleanComplete = false;
+	let getNonRPSEmailComplete = false;
 
 	const service = ArgoNetAccessLibrary.getService(); // check to see if the user is authenticated to ArgoNet.
 
@@ -26,6 +27,11 @@ function updateAll() {
 		// while loop ensures that the passwords update before we move on.
 		while (!passUpdateComplete) {
 			passUpdateComplete = updatePass(); // generate temp passwords for the new accounts.
+		}
+
+		// while loop ensures that we have recorded the non-RPS emails before we move on.
+		while (!getNonRPSEmailComplete) {
+			getNonRPSEmailComplete = getNonRPSEmail(); // copy non-RPS emails to "Formatted_w_ID".
 		}
 
 		// while loop ensures that the usernames fully update before we move on.

@@ -47,3 +47,44 @@ function copyForFormatting() {
 
 	return true;
 }
+
+// this function pulls the listed email address for non-created accounts and puts them on the tab 'Formatted_w_ID'.  It won't update created acconts (since those will be RPS email addresses).  These emails are necessary to know where to email to notify the student that their account has been created.
+function getNonRPSEmail() {
+	const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+	const sourceSheet = ss.getSheetByName('Import');
+	const sourceRange = sourceSheet.getRange('A2:G');
+	const sourceData = sourceRange.getValues(); // get data from Import tab
+
+	const targetSheet = ss.getSheetByName('Formatted_w_ID');
+	const searchRange = targetSheet.getRange('A2:A');
+	const searchData = searchRange.getValues().flat(1); // UIDs for cross reference
+	const pasteRange = targetSheet.getRange('O2:O');
+	const existingData = pasteRange.getValues().flat(1); // non-RPS emails
+
+	let nonRPSEmail; // a placeholder for each users non-RPS email as it is added to the list.
+	const nonRPSEmailList = []; // the final list to be pasted back into the sheet.
+
+	// we have to go through every entry in searchData, including the blank entries, to make sure that the final list has the correct email addresses listed in the correct index of the array.
+	searchData.forEach((uID) => {
+		const [sourceInfo] = sourceData.filter((el) => el[0] === uID); // filter down the info from the Import tab to match the User ID for the user on the "Formatted_w_ID" tab.
+
+		// if there is a match then we need to check to see if the account is created.  If there is no match just push a null entry.
+		if (sourceInfo) {
+			if (sourceInfo[6] !== 1) {
+				// if sourceInfo[6] !== 1 then the account has not been created.
+				[, , , , , nonRPSEmail] = sourceInfo; // get the listed email address.
+				nonRPSEmailList.push([nonRPSEmail]); // push it to the list.
+			} else {
+				// here the account has been created.
+				nonRPSEmailList.push([existingData[nonRPSEmailList.length]]); // get whatever is already listed in the corrisponding cell on "Formatted_w_ID".
+			}
+		} else {
+			nonRPSEmailList.push(['']); // if we get a null respones push a blank cell.
+		}
+	});
+
+	pasteRange.setValues(nonRPSEmailList); // paste result to sheet.
+
+	return true;
+}

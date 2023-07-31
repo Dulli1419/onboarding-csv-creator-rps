@@ -8,6 +8,7 @@ function clearSheet() {
 	const stuRange = sheet.getRange('A3:A');
 	const passRange = sheet.getRange('G2:G');
 	const samRange = sheet.getRange('I2:I');
+	const nonRPSEmailRange = sheet.getRange('O2:O');
 
 	const ui = SpreadsheetApp.getUi();
 
@@ -20,6 +21,7 @@ function clearSheet() {
 		stuRange.clearContent();
 		passRange.clearContent();
 		samRange.clearContent();
+		nonRPSEmailRange.clearContent();
 
 		return true;
 	}
