@@ -11,7 +11,7 @@ function clearSheet() {
 
 	const ui = SpreadsheetApp.getUi();
 
-	// Warn user that they are signing in/out when they have not recently signed out/in.
+	// Warn user that they will be deleting all content on the spreadsheet.
 	const result = ui.alert('This will remove all data from the tab "Formatted_w_ID".  Are you sure you want to contiue?', ui.ButtonSet.YES_NO);
 
 	// Process the user's response.
@@ -48,7 +48,8 @@ function updateSchoolYear() {
 function onOpenHandler() {
 	SpreadsheetApp.getUi()
 		.createMenu('Custom')
-		.addItem('Update Students', 'updateAll')
+		.addItem('Update Student Info', 'updateAll')
+		.addItem('Update ArgoNet', 'triggerArgoNetUpdate')
 		.addItem('Reset Sheet', 'clearSheet')
 		.addToUi();
 }
