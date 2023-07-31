@@ -9,6 +9,7 @@ function clearSheet() {
 	const passRange = sheet.getRange('G2:G');
 	const samRange = sheet.getRange('I2:I');
 	const nonRPSEmailRange = sheet.getRange('O2:O');
+	const emailSentRange = sheet.getRange('P2:P');
 
 	const ui = SpreadsheetApp.getUi();
 
@@ -22,6 +23,7 @@ function clearSheet() {
 		passRange.clearContent();
 		samRange.clearContent();
 		nonRPSEmailRange.clearContent();
+		emailSentRange.clearContent();
 
 		return true;
 	}
@@ -52,6 +54,7 @@ function onOpenHandler() {
 		.createMenu('Custom')
 		.addItem('Update Student Info', 'updateAll')
 		.addItem('Update ArgoNet', 'triggerArgoNetUpdate')
+		.addItem('Send Emails to Students', 'getAllData')
 		.addItem('Reset Sheet', 'clearSheet')
 		.addToUi();
 }
