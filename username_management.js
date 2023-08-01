@@ -11,18 +11,10 @@ function cleanUsernames() {
 	let samClean = ''; // placeholder for each sAMAccount name being processed.
 	const samFinal = []; // final array to print to the sheet.
 
-	const importSheet = ss.getSheetByName('Import');
-	const importRange = importSheet.getRange('A2:G'); // all data, exculding headers, on the sheet that holds the existing usernames.
-	const existingUsernames = importRange.getValues();
-	let existingUser; // holds all data for the existing user;
-	let existingUN; // holds just the username for the existing user.
-
 	newData.forEach((samInt) => {
-		if (samInt[13] === 1) { // if user accounts exist
-			[existingUser] = existingUsernames.filter((el) => el[0] === samInt[0]); // search the 'Import' tab for a user with a matching user ID.
-			[, , , , , existingUN] = existingUser; // get the username from the matching user.
-			existingUN = existingUN.replace(/@rutgersprep\.org/g, ''); // remove @rutgersprep.org
-			samFinal.push([existingUN]);
+		if (samInt[13] === 1) {
+			// if user accounts exist
+			samFinal.push([samInt[8]]); // don't change the value already on the sheet.
 		} else {
 			samClean = samInt[7].normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // replace accented characters.
 			samClean = samClean.replace(/[-\s+]/g, ''); // removes '-' and spaces.
@@ -32,8 +24,9 @@ function cleanUsernames() {
 	});
 
 	finalRange.setValues(samFinal);
+	SpreadsheetApp.flush(); // force all pending changes to post to spreadsheet.
 
-	return true;
+	return true; // return true so trigger function continues.
 }
 
 // This parses all of the new usernames and matches them against all existing usernames and all of the other new usernames to see if there are any duplicates.  It then alters the duplicates by adding another letter from the first name into the existing username.  If the current username is jdoe23 this will return jodoe23.  The function then rechecks all usernames again to make sure that the new username is not, itself, a duplicate.  If so it adds another new letter (returning johdoe23).  It cycles until all usernames are unique.  If it runs out of letters in the first name it throws an error.

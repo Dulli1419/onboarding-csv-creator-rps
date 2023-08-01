@@ -8,6 +8,7 @@ function updateAll() {
 	let passUpdateComplete = false;
 	let cleanComplete = false;
 	let getNonRPSEmailComplete = false;
+	let cleanWithdrawsComplete = false;
 
 	const service = ArgoNetAccessLibrary.getService(); // check to see if the user is authenticated to ArgoNet.
 
@@ -32,6 +33,11 @@ function updateAll() {
 		// while loop ensures that we have recorded the non-RPS emails before we move on.
 		while (!getNonRPSEmailComplete) {
 			getNonRPSEmailComplete = getNonRPSEmail(); // copy non-RPS emails to "Formatted_w_ID".
+		}
+
+		// while loop ensures that we have fully recorded all accounts to withdraw before we move on.
+		while (!cleanWithdrawsComplete) {
+			cleanWithdrawsComplete = cleanWithdraws(); // record accounts that need to be deactivated and delete them from the sheet.
 		}
 
 		// while loop ensures that the usernames fully update before we move on.
