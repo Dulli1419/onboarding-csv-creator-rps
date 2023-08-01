@@ -68,7 +68,7 @@ function updateArgoNet() {
 	const newSheet = ss.getSheetByName('Formatted_w_ID');
 	const newRange = newSheet.getRange('A2:N'); // all data, exculding headers, on the sheet that holds the new usernames.
 	const newData = newRange.getValues();
-	const toUpdate = newData.filter((el) => el[13] !== 1 && el[0]); // filter down to, only, those users that have not had their accounts created and have an ID number.
+	const toUpdate = newData.filter((el) => el[13] !== 1 && el[0] && el[0] !== 'TestID'); // filter down to, only, those users that have not had their accounts created and have an ID number.
 
 	const allToUpdate = []; // this will, ultimatley, hold all the users that need to be updated.
 
