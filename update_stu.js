@@ -3,7 +3,7 @@
 
 // This updates the list of students on the "Import" tab.
 function updateStuList() {
-	ArgoNetAccessLibrary.getADVList(150265, 0, 0, 0, 'Import'); // update stu list from ArgoNet.
+	ArgoNetAccessLibrary.getADVList(150265, 0, 1, 0, 'Import'); // update stu list from ArgoNet.  Set to Keep Auth so as not to break full workflow.
 
 	return true; // return true so trigger function continues.
 }
@@ -90,6 +90,7 @@ function getNonRPSEmail() {
 	return true; // return true so trigger function continues.
 }
 
+// this checks the "Formatted_w_ID" for users that have withdrawn after enrolling and cleans up there records, marking them for deactivation as needed.
 function cleanWithdraws() {
 	const ss = SpreadsheetApp.getActiveSpreadsheet();
 	const sourceSheet = ss.getSheetByName('Formatted_w_ID');
@@ -122,6 +123,62 @@ function cleanWithdraws() {
 		}
 	}
 	SpreadsheetApp.flush(); // force all pending changes to post to spreadsheet.
+}
+
+// this pulls accounts that need to be deactivated out of ArogNet and pastes them to the a sheet for upload to Active Directory.
+function accountsToDeactivate() {
+	const ss = SpreadsheetApp.getActiveSpreadsheet();
+	const pasteSheet = ss.getSheetByName('Accounts_to_Deactivate'); // this holds accounts that need to be deactivated and withdrawn
+	const pasteCheckRange = pasteSheet.getRange('A2:A'); // User IDs
+	const pasteCheckValues = pasteCheckRange.getValues().flat(1); // put User IDs in flat array for easy comparrison
+	let curPage = 1; // tracking page for the API call
+	let listCollected = false; // will become true when API call is finished.
+	const studsToWithdraw = []; // all students marked for withdrawl.
+	const studsToWithdrawIDs = []; // all students marked for withdrawl (ids only).
+	let stuToWithdraw; // will hold student info for a single student to be collected.
+	let foundStuToWithdraw; // will hold student info for a single student that has yet to be collected on the sheet.
+	const finalStudsToDeactivate = []; // the final list of students newly marked for withdrawl.
+
+	// get all the info from the database.
+	while (!listCollected) {
+		const listEndpoint = `https://api.sky.blackbaud.com/school/v1/lists/advanced/150529?page=${curPage}&page_size=1000`;
+		const listPage = ArgoNetAccessLibrary.bbGet(listEndpoint, 0);
+
+		for (let i = 0; i < listPage.results.rows.length; i++) {
+			stuToWithdraw = {
+				UID: parseInt(listPage.results.rows[i].columns[0].value, 10), // user ID - parse int so comparrison to sheet works.
+				sAMAccountName: listPage.results.rows[i].columns[1].value.replace(/@rutgersprep\.org/g, ''), // system provides email but the .replace strips away @rutgersprep.org.
+			};
+
+			studsToWithdraw.push(stuToWithdraw); // all student info
+			studsToWithdrawIDs.push(stuToWithdraw.UID); // student ids only
+		}
+
+		if (listPage.count > 999) {
+			curPage += 1; // page_size is 1000 rows so, if we hit that, we need to grab the next page.
+		} else {
+			listCollected = true; // exit the loop.
+		}
+	}
+
+	const studsToUpdate = studsToWithdrawIDs.filter((el) => !pasteCheckValues.includes(el)); // filter down to only User IDs that are not yet collected.
+
+	studsToUpdate.forEach((stu) => {
+		[foundStuToWithdraw] = studsToWithdraw.filter((el) => el.UID === stu); // get all info for each of the found IDs.
+
+		finalStudsToDeactivate.push([foundStuToWithdraw.UID, foundStuToWithdraw.sAMAccountName]); // reformat student info for pasting to the sheet.
+	});
+
+	//  Figure out where the bottom of the column is, allowing for rows to be skipped in the data set (so we know where to insert the new account info).  It uses findLast() to determine the value of the last non-falsey item then lastIndexOf() to get the index of it (lastIndexOf to account for the possiblity of duplicates).
+	const pasteIndex = pasteCheckValues.lastIndexOf(pasteCheckValues.findLast((el) => el));
+
+	if (finalStudsToDeactivate.length > 0) {
+		const pasteRange = pasteSheet.getRange(pasteIndex + 3, 1, finalStudsToDeactivate.length, 2); // +3 because you need +1 for each of the following: Google Sheets is 1-indexed not 0-indexed like the array. Header Row. Add New Row.
+
+		pasteRange.setValues(finalStudsToDeactivate); // paste the account info to the sheet.
+	}
+
+	cleanWithdraws(); // remove Withdrawn Accounts from "Formatted_w_ID" tab
 
 	return true; // return true so trigger function continues.
 }

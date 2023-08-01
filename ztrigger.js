@@ -8,7 +8,7 @@ function updateAll() {
 	let passUpdateComplete = false;
 	let cleanComplete = false;
 	let getNonRPSEmailComplete = false;
-	let cleanWithdrawsComplete = false;
+	let accountsToDeactivateComplete = false;
 
 	const service = ArgoNetAccessLibrary.getService(); // check to see if the user is authenticated to ArgoNet.
 
@@ -36,8 +36,8 @@ function updateAll() {
 		}
 
 		// while loop ensures that we have fully recorded all accounts to withdraw before we move on.
-		while (!cleanWithdrawsComplete) {
-			cleanWithdrawsComplete = cleanWithdraws(); // record accounts that need to be deactivated and delete them from the sheet.
+		while (!accountsToDeactivateComplete) {
+			accountsToDeactivateComplete = accountsToDeactivate(); // record accounts that need to be deactivated and delete them from the sheet.
 		}
 
 		// while loop ensures that the usernames fully update before we move on.
@@ -46,6 +46,7 @@ function updateAll() {
 		}
 
 		checkForDupUsernames(); // check usernames to make sure they are unique across all usernames.
+		reset();
 	} else {
 		updateStuList(); // this will only authenticate to ArgoNet and not update the list if the user is not authenticated.  We isolate this because we don't want the other functions to run until the list is properly updated.
 	}
