@@ -38,17 +38,55 @@ function updatePass() {
 	const constantInfo = infoRange.getValues();
 	const sourceRange = sheet.getRange('G1:G'); // Password column
 	const existingInfo = sourceRange.getValues();
+	const gradYearRange = sheet.getRange('F1:F'); // Description column
+	const gradYearList = gradYearRange.getValues();
 	const tempPasses = []; // final list of temp passwords.
+
+	const infoSheet = ss.getSheetByName('School_Info');
+	const fourthGradYear = infoSheet.getRange('D10').getValue(); // this is the current grad year for students in 4th grade.
+
+	const lowerGrades = [
+		fourthGradYear + 4, // kindergarten
+		fourthGradYear + 3, // 1st grade
+		fourthGradYear + 2, // 2nd grade
+		fourthGradYear + 1, // 3rd grade
+		fourthGradYear, // 4th grade
+	];
+
+	// these are the passwords used by the corrisponding grades in the lowerGrades array.
+	const lowerPass = [
+		'Kindness1', // kindergarten
+		'1stgrade!', // 1st grade
+		'2ndgrade!', // 2nd grade
+		'3rdgrade!', // 3rd grade
+		'17prep66!', // 4th grade
+	];
 
 	sheet.activate(); // switch user to 'Formatted_w_ID' tab;
 
 	// checks state of sheet to make sure we don't overwrite existing passwords.
 	for (let i = 0; i < constantInfo.length; i++) {
-		if (!constantInfo[i][0]) { // if no student ID then we set cell to be blank.
+		if (!constantInfo[i][0]) {
+			// if no student ID then we set cell to be blank.
 			tempPasses.push(['']);
-		} else if (!existingInfo[i][0]) { // if student ID exists but no pass exists then we set a new temp password.
-			tempPasses.push([passGenerator()]);
-		} else { // if both exist then we keep the cell as it is.
+		} else if (!existingInfo[i][0]) {
+			// if student ID exists but no pass exists then we set a new temp password.
+
+			// first check to see if it's one of the lower school classes.
+			let stuGradYear = gradYearList[i][0]; // this is the "Description" column.  On the sheet it reads "Class of 20XX"
+			stuGradYear = stuGradYear.replace(/[-\s+]/g, ''); // remove all spaces and '-' from the description.
+			stuGradYear = stuGradYear.slice(-4); // grab the last 4 characters only (the students grad year).
+			stuGradYear = parseInt(stuGradYear, 10); // Parse as an Int for comparrision below.
+
+			if (lowerGrades.includes(stuGradYear)) {
+				// if the grad year of the student is in one of the relevant lower school grades we push the specific password to them.
+				const lowerPassIndex = lowerGrades.indexOf(stuGradYear); // get the index from [lowerGrades]
+				tempPasses.push([lowerPass[lowerPassIndex]]); // push the item in the matchin index in [lowerPass]
+			} else {
+				tempPasses.push([passGenerator()]); // generate a random password and push it to the final array
+			}
+		} else {
+			// if both exist then we keep the cell as it is.
 			tempPasses.push(existingInfo[i]);
 		}
 	}
