@@ -91,6 +91,7 @@ function processEmails(emails, emailBodyHTML, emailSubject, emailBody, userID) {
 	const bccEmails = [
 		// the list of emails to BCC
 		'nardulli@rutgersprep.org',
+		'nastus@rutgersprep.org',
 	];
 
 	for (let i = 0; i < emails.length; i++) {
