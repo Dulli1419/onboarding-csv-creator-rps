@@ -200,3 +200,41 @@ function getAllData() {
 		sendEmails(allUsers[i], allEmails, subject); // send email for that user and mark as having been sent.
 	}
 }
+
+// this injects fake data into the email stream so that we can force out a test email in order to review the content of the message before sending.
+function sendTestEmail() {
+	const ui = SpreadsheetApp.getUi();
+	const subject = 'RPS New Student Accounts TEST EMAIL'; // define the subject for the email
+	const allEmails = [];
+
+	// test user data
+	const testUser = {
+		id: 24601,
+		firstName: 'Jean',
+		tempPassword: 'javertWHOM??',
+		username: 'jvaljean62',
+		contactEmail: 'jvaljean62@rutgersprep.org',
+	};
+
+	const allUsers = [testUser];
+
+	// prompt the end user for the destination email address(es).  The people generaly BCC: on the real message will automatically recieve the test one.
+	const result = ui.prompt('Please list the email(s) where you would like the Test Email delivered.  Make sure to comma seperate each email address.');
+
+	// Get the button that the user pressed.
+	const button = result.getSelectedButton();
+
+	// if the user entered an email address send the email
+	if (button === ui.Button.OK) {
+		const response = result.getResponseText(); // this is the list of target email address(es)
+		allEmails.push(response); // push them to allEmails for processing.
+
+		sendEmails(allUsers, allEmails, subject); // send email for that user and mark as having been sent.
+
+		return true;
+	}
+
+	Logger.log('Test Email cancled.  User clicked the [X] button or the Cancel Button');
+
+	return false;
+}

@@ -55,6 +55,7 @@ function onOpenHandler() {
 		.addItem('Update Student Info', 'updateAllReset')
 		.addItem('Update ArgoNet', 'triggerArgoNetUpdate')
 		.addItem('Send Emails to Students', 'getAllData')
+		.addItem('Send Test Email', 'sendTestEmail')
 		.addItem('Reset Sheet', 'clearSheet')
 		.addToUi();
 }

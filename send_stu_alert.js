@@ -73,7 +73,6 @@ function getNOHTMLStuAlertMessage(data) {
 
 	text += '\n\nLower School';
 
-
 	text += '\n---------';
 
 	for (let i = 0; i < data.withdrawInfo.length; i++) {
@@ -102,7 +101,7 @@ function getStuAlertMessage(data) {
 
 // this take the list of people to send the message to, the subject line, and the email body content both with and without HTML formatting then process it to send out the email.
 function processStuAlert(emails, emailBodyHTML, emailSubject, emailBody) {
-	let emailsFormatted = ''; // this will hold the comma deliminated list of emails to be sent
+	const emailsFormatted = ''; // this will hold the comma deliminated list of emails to be sent
 	const bccEmails = emails;
 
 	try {
@@ -138,7 +137,13 @@ function enrollAlertCompile() {
 		return Logger.log('no change to enrollment'); // also log that fact to the console.
 	}
 
-	let allEmails = ['nardulli@rutgersprep.org']; // list of people that recieve the notificaiton regardless of division.
+	let allEmails = [
+		'nardulli@rutgersprep.org',
+		'lensborn@rutgersprep.org',
+		'denise@rutgersprep.org',
+		'domanski@rutgersprep.org',
+		'rutman@rutgersprep.org',
+	]; // list of people that recieve the notificaiton regardless of division.
 	const usRecipient = []; // US only recipients
 	const msRecipient = []; // MS only recipients
 	const lsRecipient = []; // LS only recipients
