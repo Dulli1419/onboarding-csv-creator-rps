@@ -2,7 +2,7 @@
 /* eslint-env es6 */
 
 // This updates the list of students and triggers the rest of the functions to assign them a new temp pass.
-function updateAll(doReset) {
+function updateAll(doReset, headless) {
 	let importComplete = false;
 	let copyComplete = false;
 	let passUpdateComplete = false;
@@ -17,7 +17,7 @@ function updateAll(doReset) {
 
 		// while loop ensures that the import finishes before we move on.
 		while (!importComplete) {
-			importComplete = updateStuList(); // update stu list from ArgoNet.
+			importComplete = updateStuList(headless); // update stu list from ArgoNet.
 		}
 
 		// while loop ensures that the copy finishes before we move on.
@@ -52,10 +52,10 @@ function updateAll(doReset) {
 			reset();
 		}
 	} else {
-		updateStuList(); // this will only authenticate to ArgoNet and not update the list if the user is not authenticated.  We isolate this because we don't want the other functions to run until the list is properly updated.
+		updateStuList(headless); // this will only authenticate to ArgoNet and not update the list if the user is not authenticated.  We isolate this because we don't want the other functions to run until the list is properly updated.
 	}
 }
 
 function updateAllReset() {
-	updateAll(true);
+	updateAll(true, 0);
 }

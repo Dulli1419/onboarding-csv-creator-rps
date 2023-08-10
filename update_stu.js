@@ -2,8 +2,8 @@
 /* eslint-env es6 */
 
 // This updates the list of students on the "Import" tab.
-function updateStuList() {
-	ArgoNetAccessLibrary.getADVList(150265, 0, 1, 0, 'Import'); // update stu list from ArgoNet.  Set to Keep Auth so as not to break full workflow.
+function updateStuList(headless) {
+	ArgoNetAccessLibrary.getADVList(150265, 0, 1, headless, 'Import'); // update stu list from ArgoNet.  Set to Keep Auth so as not to break full workflow.
 
 	return true; // return true so trigger function continues.
 }

@@ -1,7 +1,7 @@
 // JavaScript Document
 /* eslint-env es6 */
 
-// this takes the data from the sheet and builds a message without HTML formatting, in case that isn't supported. data in this context is the result of getAllData().
+// this takes the data from the sheet and builds a message without HTML formatting, in case that isn't supported. data in this context is the result of enrollAlertCompile().
 function getNOHTMLStuAlertMessage(data) {
 	let text = '';
 
@@ -128,36 +128,36 @@ function sendStuAlert(data, emails, emailSubject) {
 	}
 }
 
-// this gets all the user data into an array, then sends emails to each entry in that array one at a time.
+// this compiles the enrollment changes and evaluates which users should recieve the notification, then sends that info out to be processed before being sent.
 function enrollAlertCompile() {
-	const stuData = enrollmentUpdate();
+	const stuData = enrollmentUpdate(); // get info about enrollment changes from ArgoNet
 	const subject = 'Enrollment Update!'; // define the subject for the email
 
 	// if there have been no changes to enrollment don't send the email.
 	if (!stuData.emailLS && !stuData.emailMS && !stuData.emailUS) {
-		return Logger.log('no change to enrollment');
+		return Logger.log('no change to enrollment'); // also log that fact to the console.
 	}
 
 	let allEmails = ['nardulli@rutgersprep.org']; // list of people that recieve the notificaiton regardless of division.
-	const usRecipient = [];
-	const msRecipient = [];
-	const lsRecipient = [];
+	const usRecipient = []; // US only recipients
+	const msRecipient = []; // MS only recipients
+	const lsRecipient = []; // LS only recipients
 
-	// if there are US students, emails the US.
+	// if there are US students, email the US.
 	if (stuData.emailUS) {
 		allEmails = [...usRecipient, ...allEmails];
 	}
 
-	// if there are MS students, emails the MS.
+	// if there are MS students, email the MS.
 	if (stuData.emailMS) {
 		allEmails = [...msRecipient, ...allEmails];
 	}
 
-	// if there are LS students, emails the LS.
+	// if there are LS students, email the LS.
 	if (stuData.emailLS) {
 		allEmails = [...lsRecipient, ...allEmails];
 	}
 
-	updateAll(false); // update student info to the sheet without resetting the user's credentials.
+	updateAll(false, 1); // update student info to the sheet without resetting the user's credentials.
 	sendStuAlert(stuData, allEmails, subject); // send email for that user and mark as having been sent.
 }
