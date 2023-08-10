@@ -52,7 +52,7 @@ function updateSchoolYear() {
 function onOpenHandler() {
 	SpreadsheetApp.getUi()
 		.createMenu('Custom')
-		.addItem('Update Student Info', 'updateAll')
+		.addItem('Update Student Info', 'updateAllReset')
 		.addItem('Update ArgoNet', 'triggerArgoNetUpdate')
 		.addItem('Send Emails to Students', 'getAllData')
 		.addItem('Reset Sheet', 'clearSheet')

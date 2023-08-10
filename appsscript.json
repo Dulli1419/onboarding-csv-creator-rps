@@ -1,15 +1,14 @@
 {
   "timeZone": "America/New_York",
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
   "dependencies": {
     "libraries": [
       {
         "userSymbol": "ArgoNetAccessLibrary",
-        "version": "11",
         "libraryId": "1Ap988uVZ1D8CZmRw1f3JlpFJgpUh_IUzQeTuFRUbp9na4ytqB0ntZvJt",
-        "developmentMode": false
+        "version": "12"
       }
     ]
-  },
-  "exceptionLogging": "STACKDRIVER",
-  "runtimeVersion": "V8"
+  }
 }

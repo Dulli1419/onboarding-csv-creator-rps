@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body>
+    <div>Good Morning!</div><br />
+    <!-- <? ?> is markup to signal that the code between those two symbols is javascript.  This loop takes the data provided in getMessage() and injects into the email message directly -->
+	<div>The enrollment record has been altered in the last 24 hours. Please see below:</div><br />
+    <table cellspacing="0" style="margin-left: 40px; border:4px solid #60021D; padding: 10px;">
+		<tbody style="text-align: center; vertical-align: center;">
+		<tr style="height:29px; font-weight: bold; color: #98002e;">
+			<td style="overflow:hidden;padding:2px 7px 2px 3px;vertical-align:center;border-bottom:1px solid rgb(204,204,204); border-right:1px solid rgb(204,204,204)">New Students</td>
+			<td style="overflow:hidden;padding:2px 3px 2px 7px;vertical-align:center;border-bottom:1px solid rgb(204,204,204)">Withdrawing Students</td>
+		</tr>
+		<tr>
+			<td style="overflow:hidden;padding:0 3px;vertical-align:top;border-right:1px solid rgb(204,204,204); min-width: 155px;">
+			<div style="font-weight: bold; padding: 13px 0 13px 0; text-decoration: underline;">Upper School</div>
+			<? for (let i = 0; i < data.newInfo.length; i++) { ?>
+				<? if (data.newInfo[i].division === 'US') { ?>
+					<div style="line-height: 2"><a style="color:#000; text-decoration: none;" href=<?=`${data.newInfo[i].profile_url}`?>><?=`${data.newInfo[i].name}`?></a></div>
+				<? } ?>
+			<? } ?>
+			<br />
+			<div style="font-weight: bold; padding: 13px 0 13px 0; text-decoration: underline;">Middle School</div>
+			<? for (let i = 0; i < data.newInfo.length; i++) { ?>
+				<? if (data.newInfo[i].division === 'MS') { ?>
+					<div style="line-height: 2"><a style="color:#000; text-decoration: none;" href=<?=`${data.newInfo[i].profile_url}`?>><?=`${data.newInfo[i].name}`?></a></div>
+				<? } ?>
+			<? } ?>
+			<br />
+			<div style="font-weight: bold; padding: 13px 0 13px 0; text-decoration: underline;">Lower School</div>
+			<? for (let i = 0; i < data.newInfo.length; i++) { ?>
+				<? if (data.newInfo[i].division === 'LS') { ?>
+					<div style="line-height: 2"><a style="color:#000; text-decoration: none;" href=<?=`${data.newInfo[i].profile_url}`?>><?=`${data.newInfo[i].name}`?></a></div>
+				<? } ?>
+			<? } ?>
+			</td>
+			<td style="overflow:hidden;padding:0 3px;vertical-align:top; min-width: 155px;">
+				<div style="font-weight: bold; padding: 13px 0 13px 0; text-decoration: underline;">Upper School</div>
+				<? for (let i = 0; i < data.withdrawInfo.length; i++) { ?>
+					<? if (data.withdrawInfo[i].division === 'US') { ?>
+						<div style="line-height: 2"><a style="color:#000; text-decoration: none;" href=<?=`${data.withdrawInfo[i].profile_url}`?>><?=`${data.withdrawInfo[i].name}`?></a></div>
+					<? } ?>
+				<? } ?>
+				<br />
+				<div style="font-weight: bold; padding: 13px 0 13px 0; text-decoration: underline;">Middle School</div>
+				<? for (let i = 0; i < data.withdrawInfo.length; i++) { ?>
+					<? if (data.withdrawInfo[i].division === 'MS') { ?>
+						<div style="line-height: 2"><a style="color:#000; text-decoration: none;" href=<?=`${data.withdrawInfo[i].profile_url}`?>><?=`${data.withdrawInfo[i].name}`?></a></div>
+					<? } ?>
+				<? } ?>
+				<br />
+				<div style="font-weight: bold; padding: 13px 0 13px 0; text-decoration: underline;">Lower School</div>
+				<? for (let i = 0; i < data.withdrawInfo.length; i++) { ?>
+					<? if (data.withdrawInfo[i].division === 'LS') { ?>
+						<div style="line-height: 2"><a style="color:#000; text-decoration: none;" href=<?=`${data.withdrawInfo[i].profile_url}`?>><?=`${data.withdrawInfo[i].name}`?></a></div>
+					<? } ?>
+				<? } ?>
+				</td>
+		</tr>
+	</tbody>
+	</table>
+	<br />
+	<div>Have a great day!</div>
+    <br /><br />
+    <div style="font-size:12px; font-style:italic">This email was sent from a notification-only address and cannot accept incoming email.</div>
+  </body>
+</html>

@@ -117,7 +117,7 @@ function updateArgoNet() {
 		}
 	});
 
-	updateAll(); // pull the newly updated ArgoNet info back down into the sheet.
+	updateAllReset(); // pull the newly updated ArgoNet info back down into the sheet.
 }
 
 // this actually triggers the above scripts.  It checks to see if the user has authentication to the system before running the scripts above.  If the user doesn't then it does a simple bbGet just to force it to fail over into an auth request.
