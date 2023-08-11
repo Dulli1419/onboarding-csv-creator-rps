@@ -88,11 +88,16 @@ function getNOHTMLmessage(data) {
 // this take the list of people to send the message to, the subject line, and the email body content both with and without HTML formatting then process it to send out the email.
 function processEmails(emails, emailBodyHTML, emailSubject, emailBody, userID) {
 	let emailsFormatted = ''; // this will hold the comma deliminated list of emails to be sent
-	const bccEmails = [
+	let bccEmails = [
 		// the list of emails to BCC
 		'nardulli@rutgersprep.org',
 		'nastus@rutgersprep.org',
 	];
+
+	// removes BCC emails in the event this is a test message.
+	if (userID === 'TEST24601') {
+		bccEmails = [];
+	}
 
 	for (let i = 0; i < emails.length; i++) {
 		if (emails[i]) {
@@ -108,7 +113,10 @@ function processEmails(emails, emailBodyHTML, emailSubject, emailBody, userID) {
 			noReply: true,
 		});
 
-		markEmailSent(userID); // mark the user as having had the email sent.
+		// rerfrain from updating the sheet if it is a test message.
+		if (userID !== 'TEST24601') {
+			markEmailSent(userID); // mark the user as having had the email sent.
+		}
 	} catch (err) {
 		Logger.log(`${err} - Could not send message to the following addresses: ${emailsFormatted}`);
 	}
@@ -209,14 +217,12 @@ function sendTestEmail() {
 
 	// test user data
 	const testUser = {
-		id: 24601,
+		id: 'TEST24601',
 		firstName: 'Jean',
 		tempPassword: 'javertWHOM??',
 		username: 'jvaljean62',
 		contactEmail: 'jvaljean62@rutgersprep.org',
 	};
-
-	const allUsers = [testUser];
 
 	// prompt the end user for the destination email address(es).  The people generaly BCC: on the real message will automatically recieve the test one.
 	const result = ui.prompt('Please list the email(s) where you would like the Test Email delivered.  Make sure to comma seperate each email address.');
@@ -229,7 +235,7 @@ function sendTestEmail() {
 		const response = result.getResponseText(); // this is the list of target email address(es)
 		allEmails.push(response); // push them to allEmails for processing.
 
-		sendEmails(allUsers, allEmails, subject); // send email for that user and mark as having been sent.
+		sendEmails(testUser, allEmails, subject); // send email for that user and mark as having been sent.
 
 		return true;
 	}

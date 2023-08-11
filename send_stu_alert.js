@@ -85,8 +85,7 @@ function getNOHTMLStuAlertMessage(data) {
 
 	text += 'Have a great day!\n\n\n';
 
-	text +=
-		'This email was sent from a notification-only address and cannot accept incoming email.\n\nIf you are seeing this version of this message your email client does not support HTML.';
+	text += 'This email was sent from a notification-only address and cannot accept incoming email.\n\nIf you are seeing this version of this message your email client does not support HTML.';
 
 	return text;
 }
@@ -143,8 +142,9 @@ function enrollAlertCompile() {
 		'denise@rutgersprep.org',
 		'domanski@rutgersprep.org',
 		'rutman@rutgersprep.org',
+		'nurse@rutgersprep.org',
 	]; // list of people that recieve the notificaiton regardless of division.
-	const usRecipient = []; // US only recipients
+	const usRecipient = ['ryan@rutgersprep.org']; // US only recipients
 	const msRecipient = []; // MS only recipients
 	const lsRecipient = []; // LS only recipients
 
