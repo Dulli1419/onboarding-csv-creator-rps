@@ -1,13 +1,68 @@
 // JavaScript Document
 /* eslint-env es6 */
 
+// This gets all of the enrollment records from the last 2 years so that we can get info about withdrawn students.
+function getEnrollmentRecords() {
+	const allYears = ArgoNetAccessLibrary.bbGet('https://api.sky.blackbaud.com/school/v1/years', 1); // get year data from ArgoNet.
+	const curYearData = allYears.value.filter((el) => el.current_year); // filter to the current year
+	const curYear = curYearData[0].school_year_label; // return the current school year
+	const lastYear = `${parseInt(curYear.slice(0, 4), 10) - 1}-${curYear.slice(0, 4)}`; // using the current school year record deincriment to last year.
+	const relevantYears = [lastYear, curYear]; // so we can loop through them.
+	let lastYearRecords = []; // this will hold the final list of all student records for last year.
+	let curYearRecords = []; //  this will hold the final list of all student records for this year.
+
+	for (let i = 0; i < relevantYears.length; i++) {
+		let gotAllRecords = false; // this is used to escape the while loop
+		const recordIncrement = 1000; // max 5000 - API defaults to 1000.
+		let recordOffset = 0; // how many records to offset in the event that we have more then the recordIncrement.
+
+		while (!gotAllRecords) {
+			const enrollmentLink = `https://api.sky.blackbaud.com/school/v1/users/enrollments?school_year=${relevantYears[i]}&limit=${recordIncrement}&offset=${recordOffset}`; // generate the correct API link.
+
+			const processingRecords = ArgoNetAccessLibrary.bbGet(enrollmentLink, 1); // get enrollment records.
+
+			if (i === 0) {
+				lastYearRecords = [...lastYearRecords, ...processingRecords.value]; // if i === 0 then we're in lastYear
+			} else {
+				curYearRecords = [...curYearRecords, ...processingRecords.value]; // otherwise we're in this year.
+			}
+
+			if (processingRecords.count < recordIncrement) {
+				gotAllRecords = true; // if the count of records is less then the increment then there is nothing left to return, exit the loop.
+			} else {
+				recordOffset += recordIncrement; // grab the next group of records.
+			}
+		}
+	}
+
+	const allRecords = [curYearRecords, lastYearRecords]; // compile into a single variable.
+	return allRecords;
+}
+
 // This takes the list of students labled 'New' or 'Withdrawing' and pulls all of their details, passing them on to be sent in the email.
-function getEnrollmentChanges(sheet, allStuInfo) {
+function getEnrollmentChanges(sheet) {
+	const allEnrollmentRecords = getEnrollmentRecords(); // get a list of all enrollment records for both this year and last.
 	const newStu = sheet.getRange('E2:E').getValues().flat(1); // List of New Stu User IDs
 	const withdrawStu = sheet.getRange('H2:H').getValues().flat(1); // List of Withdrawing Stu User IDs.
 	const allStu = [newStu, withdrawStu]; // so we can grab each in a loop.
-	const msDiv = ['6th Grade', '7th Grade', '8th Grade']; // to filter by division.
-	const usDiv = ['9th Grade', '10th Grade', '11th Grade', '12th Grade']; // to filter by division.
+	// list all grade levels so that we can calculate the grad year below.
+	const gradeLevels = [
+		'12th Grade',
+		'11th Grade',
+		'10th Grade',
+		'9th Grade',
+		'8th Grade',
+		'7th Grade',
+		'6th Grade',
+		'5th Grade',
+		'4th Grade',
+		'3rd Grade',
+		'2nd Grade',
+		'1st Grade',
+		'Kindergarten',
+		'Junior Kindergarten',
+		'Pre-Kindergarten',
+	];
 	let sendLS = false; // if true send email to LS people
 	let sendMS = false; // if true send email to MS people
 	let sendUS = false; // if true send email to US people
@@ -33,23 +88,29 @@ function getEnrollmentChanges(sheet, allStuInfo) {
 
 		// this loops through all the entries within the inner array and pulls relevant data out for our use.
 		for (let j = 0; j < checkData.length; j++) {
-			[fullStuInfo] = allStuInfo.filter((el) => el.id === checkData[j]); // all of the info attaached to the student.
+			[fullStuInfo] = allEnrollmentRecords[0].filter((el) => el.user_id === checkData[j]); // all current year info attached to the student.
+
+			// if no record is found for the student in the current school year then we check to see if there is a record in the past school year.
+			if (!fullStuInfo) {
+				[fullStuInfo] = allEnrollmentRecords[1].filter((el) => el.user_id === checkData[j]); // all past year info attached to the student.
+			}
 
 			if (fullStuInfo) {
 				let divisionLevel = 'LS';
-				const gradYear = fullStuInfo.student_info.grad_year.slice(-2); // grab the last 2 characters of the grad year only.
-				let stuName = `${fullStuInfo.first_name} ${fullStuInfo.last_name} '${gradYear}`;
+				// grab the last 2 digits of the current school year then add how many grade levels they have left to calculate the grad year.
+				const gradYear = parseInt(fullStuInfo.school_year.slice(-2), 10) + gradeLevels.indexOf(fullStuInfo.grade_level.description);
+				let stuName = `${fullStuInfo.firstname} ${fullStuInfo.lastname} '${gradYear}`;
 
 				// format the name correctly if the student has a 'Preferred Name'.
 				if (fullStuInfo.preferred_name) {
-					stuName = `${fullStuInfo.first_name} '${fullStuInfo.preferred_name}' ${fullStuInfo.last_name} '${gradYear}`;
+					stuName = `${fullStuInfo.firstname} '${fullStuInfo.preferred_name}' ${fullStuInfo.lastname} '${gradYear}`;
 				}
 
 				// Mark them with the correct division so that we can sort them within the email.
-				if (msDiv.includes(fullStuInfo.student_info.grade_level_description)) {
+				if (fullStuInfo.school_level.name === 'Middle School') {
 					divisionLevel = 'MS';
 					changeMS = true; // mark this division as having had a change so we know this divison doesn't need a "No Change" Entry.
-				} else if (usDiv.includes(fullStuInfo.student_info.grade_level_description)) {
+				} else if (fullStuInfo.school_level.name === 'Upper School') {
 					divisionLevel = 'US';
 					changeUS = true; // mark this division as having had a change so we know this divison doesn't need a "No Change" Entry.
 				} else {
@@ -59,8 +120,8 @@ function getEnrollmentChanges(sheet, allStuInfo) {
 				// compile the student entry.
 				stuData = {
 					name: stuName,
-					id: fullStuInfo.id,
-					profile_url: fullStuInfo.profile_url,
+					id: fullStuInfo.user_id,
+					profile_url: `https://rutgersprep.myschoolapp.com/app#profile/${fullStuInfo.user_id}/contactcard`,
 					division: divisionLevel,
 				};
 
@@ -83,7 +144,7 @@ function getEnrollmentChanges(sheet, allStuInfo) {
 
 		const divList = ['LS', 'MS', 'US'];
 		const changeCheck = [changeLS, changeMS, changeUS]; // log whether each division has had a change
-		const emptyStuds = []; // this holds the duplicated object based on emptyStud.  Needed so that the divisoin prop can be updated individually for each emptyStud object.
+		const emptyStuds = []; // this holds the duplicated object based on emptyStud.  Needed so that the division prop can be updated individually for each emptyStud object.
 
 		for (let m = 0; m < divList.length; m++) {
 			if (!changeCheck[m]) { // only add an emptyStud if there was no change.
@@ -140,7 +201,7 @@ function enrollmentUpdate() {
 	const stuIds = []; // will hold all stuIDs.
 
 	while (!allStuInfoCollected) {
-		stuInfo = ArgoNetAccessLibrary.bbGet(`https://api.sky.blackbaud.com${infoLink}`, 0);
+		stuInfo = ArgoNetAccessLibrary.bbGet(`https://api.sky.blackbaud.com${infoLink}`, 1);
 		allStuInfo = [...allStuInfo, ...stuInfo.value]; // concat this call into the whole.
 
 		if (stuInfo.next_link) {
@@ -167,5 +228,5 @@ function enrollmentUpdate() {
 
 	SpreadsheetApp.flush(); // force all pending changes to post to spreadsheet.
 
-	return getEnrollmentChanges(sheet, allStuInfo); // get detailed user info for the students listed as New or Withdrawing (Which are new and withdrawing is calculated by formulas in the sheet).
+	return getEnrollmentChanges(sheet); // get detailed user info for the students listed as New or Withdrawing (Which are new and withdrawing is calculated by formulas in the sheet).
 }
