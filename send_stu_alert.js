@@ -147,6 +147,7 @@ function enrollAlertCompile() {
 		'loy@rutgersprep.org',
 		'forte@rutgersprep.org',
 		'sullivan@rutgersprep.org',
+		'smith@rutgersprep.org',
 	]; // list of people that recieve the notificaiton regardless of division.
 	const usRecipient = ['ryan@rutgersprep.org', 'bautista-burk@rutgersprep.org']; // US only recipients
 	const msRecipient = ['mcmillen@rutgersprep.org', 'simpson@rutgersprep.org', 'marotto@rutgersprep.org']; // MS only recipients
