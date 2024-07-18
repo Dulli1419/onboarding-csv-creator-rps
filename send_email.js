@@ -220,11 +220,11 @@ function sendTestEmail() {
 		id: 'TEST24601',
 		firstName: 'Jean',
 		tempPassword: 'javertWHOM??',
-		username: 'jvaljean62',
+		username: 'jvaljean62@rutgersprep.org',
 		contactEmail: 'jvaljean62@rutgersprep.org',
 	};
 
-	// prompt the end user for the destination email address(es).  The people generaly BCC: on the real message will automatically recieve the test one.
+	// prompt the end user for the destination email address(es).
 	const result = ui.prompt('Please list the email(s) where you would like the Test Email delivered.  Make sure to comma seperate each email address.');
 
 	// Get the button that the user pressed.
