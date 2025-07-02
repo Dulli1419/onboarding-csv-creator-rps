@@ -152,8 +152,8 @@ function enrollAlertCompile() {
 		'ladd@rutgersprep.org',
 	]; // list of people that recieve the notificaiton regardless of division.
 	const usRecipient = ['ryan@rutgersprep.org', 'bautista-burk@rutgersprep.org', 'chodl@rutgersprep.org']; // US only recipients
-	const msRecipient = ['mcmillen@rutgersprep.org', 'simpson@rutgersprep.org', 'marotto@rutgersprep.org', 'bratek@rutgersprep.org']; // MS only recipients
-	const lsRecipient = ['tolia@rutgersprep.org', 'keane@rutgersprep.org']; // LS only recipients
+	const msRecipient = ['mcmillen@rutgersprep.org', 'simpson@rutgersprep.org', 'fiore@rutgersprep.org', 'bratek@rutgersprep.org']; // MS only recipients
+	const lsRecipient = ['tolia@rutgersprep.org', 'dthomas@rutgersprep.org']; // LS only recipients
 
 	// if there are US students, email the US.
 	if (stuData.emailUS) {
