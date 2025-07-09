@@ -87,16 +87,26 @@ function getNOHTMLmessage(data) {
 
 // this take the list of people to send the message to, the subject line, and the email body content both with and without HTML formatting then process it to send out the email.
 function processEmails(emails, emailBodyHTML, emailSubject, emailBody, userID) {
+	const ui = SpreadsheetApp.getUi();
 	let emailsFormatted = ''; // this will hold the comma deliminated list of emails to be sent
-	let bccEmails = [
-		// the list of emails to BCC
-		'nardulli@rutgersprep.org',
-		'nastus@rutgersprep.org',
-	];
+	let bccEmails = []; // this will hold all email addresses to BCC.
 
-	// removes BCC emails in the event this is a test message.
-	if (userID === 'TEST24601') {
-		bccEmails = [];
+	// Get emails to BCC if not a test email.  Test emails do not have anyone to BCC.
+	if (userID !== 'TEST24601') {
+		// prompt the end user for the BCC email address(es).
+		const result = ui.prompt('Please list the email(s) that you would like to BCC, if any.  Make sure to comma seperate each email address.');
+
+		// Get the button that the user pressed.
+		const button = result.getSelectedButton();
+
+		// Populate the BCC emails addresses
+		if (button === ui.Button.OK) {
+			const response = result.getResponseText(); // this is the list of target BCC email address(es)
+			bccEmails.push(response); // push them to bccEmails for processing.
+		} else {
+			Logger.log('Email canceled.  User clicked the [X] button or the Cancel Button on the BCC prompt');
+			return false;
+		}
 	}
 
 	for (let i = 0; i < emails.length; i++) {
