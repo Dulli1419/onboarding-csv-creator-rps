@@ -54,6 +54,7 @@ function updateArgoNet() {
 			id: newUser[0], // user ID
 			email: newUser[9], // generated email address / Entra ID
 			cc_email: existingInfo.filter((el) => el.id === newUser[0])[0].email, // whatever is currently in the email field in AN
+			student_id: newUser[0], // Student ID and User ID should match.
 		};
 
 		allToUpdate.push(toUpdateInfo);
