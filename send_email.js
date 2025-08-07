@@ -86,28 +86,8 @@ function getNOHTMLmessage(data) {
 }
 
 // this take the list of people to send the message to, the subject line, and the email body content both with and without HTML formatting then process it to send out the email.
-function processEmails(emails, emailBodyHTML, emailSubject, emailBody, userID) {
-	const ui = SpreadsheetApp.getUi();
+function processEmails(emails, emailBodyHTML, emailSubject, emailBody, userID, formattedBCC) {
 	let emailsFormatted = ''; // this will hold the comma deliminated list of emails to be sent
-	let bccEmails = []; // this will hold all email addresses to BCC.
-
-	// Get emails to BCC if not a test email.  Test emails do not have anyone to BCC.
-	if (userID !== 'TEST24601') {
-		// prompt the end user for the BCC email address(es).
-		const result = ui.prompt('Please list the email(s) that you would like to BCC, if any.  Make sure to comma seperate each email address.');
-
-		// Get the button that the user pressed.
-		const button = result.getSelectedButton();
-
-		// Populate the BCC emails addresses
-		if (button === ui.Button.OK) {
-			const response = result.getResponseText(); // this is the list of target BCC email address(es)
-			bccEmails.push(response); // push them to bccEmails for processing.
-		} else {
-			Logger.log('Email canceled.  User clicked the [X] button or the Cancel Button on the BCC prompt');
-			return false;
-		}
-	}
 
 	for (let i = 0; i < emails.length; i++) {
 		if (emails[i]) {
@@ -119,7 +99,7 @@ function processEmails(emails, emailBodyHTML, emailSubject, emailBody, userID) {
 		// this sends the message to everyone on the emailsFormatted list.
 		MailApp.sendEmail(emailsFormatted, emailSubject, emailBody, {
 			htmlBody: emailBodyHTML,
-			bcc: bccEmails.join(','),
+			bcc: formattedBCC,
 			noReply: true,
 		});
 
@@ -135,13 +115,13 @@ function processEmails(emails, emailBodyHTML, emailSubject, emailBody, userID) {
 /**
  * Sends an email with everyone in the column BCC'd
  */
-function sendEmails(data, emails, emailSubject) {
+function sendEmails(data, emails, emailSubject, formattedBCC) {
 	const emailBody = getNOHTMLmessage(data); // contains the backup email body, if HTML isn't supported.
 	const emailBodyHTML = getMessage(data); // get the content from the HTML Object.  This is the body of the email (defined on email.html)
 
 	// this will send the emails, 50 people at a time, to avoid the API limit.
 	while (emails.length) {
-		processEmails(emails.splice(0, 49), emailBodyHTML, emailSubject, emailBody, data.id);
+		processEmails(emails.splice(0, 49), emailBodyHTML, emailSubject, emailBody, data.id, formattedBCC);
 	}
 }
 
@@ -197,15 +177,34 @@ function emailConfirmation() {
 
 // this get all the user data into an array, then sends emails to each entry in that array one at a time.
 function getAllData() {
+	const ui = SpreadsheetApp.getUi();
 	let allUsers = []; // all user data will be stored here.
 	let allEmails = []; // the final list of emails will be stored here.
 	const subject = 'Rutgers Prep School New Student Accounts'; // define the subject for the email
+	const bccEmails = []; // this will hold all email addresses to BCC.
 
 	const confirm = emailConfirmation(); // confirm that the user wants to send the emails
 
 	if (!confirm) {
 		return false;
 	}
+
+	// prompt the end user for the BCC email address(es).
+	const result = ui.prompt('Please list the email(s) that you would like to BCC, if any.  Make sure to comma seperate each email address.');
+
+	// Get the button that the user pressed.
+	const button = result.getSelectedButton();
+
+	// Populate the BCC emails addresses
+	if (button === ui.Button.OK) {
+		const response = result.getResponseText(); // this is the list of target BCC email address(es)
+		bccEmails.push(response); // push them to bccEmails for processing.
+	} else {
+		Logger.log('Email canceled.  User clicked the [X] button or the Cancel Button on the BCC prompt');
+		return false;
+	}
+
+	const formattedBCC = bccEmails.join(','); // format emails for sending.
 
 	allUsers = getData(); // get data for users to whom we want to send an email.
 
@@ -215,8 +214,10 @@ function getAllData() {
 
 		allEmails.push(allUsers[i].contactEmail); // this is the Non-RPS Contact Email.
 
-		sendEmails(allUsers[i], allEmails, subject); // send email for that user and mark as having been sent.
+		sendEmails(allUsers[i], allEmails, subject, formattedBCC); // send email for that user and mark as having been sent.
 	}
+
+	return Logger.log('Student Emails have been Sent');
 }
 
 // this injects fake data into the email stream so that we can force out a test email in order to review the content of the message before sending.
@@ -224,6 +225,8 @@ function sendTestEmail() {
 	const ui = SpreadsheetApp.getUi();
 	const subject = 'RPS New Student Accounts TEST EMAIL'; // define the subject for the email
 	const allEmails = [];
+	const bccEmails = [];
+	const formattedBCC = bccEmails.join(',');
 
 	// test user data
 	const testUser = {
@@ -245,7 +248,7 @@ function sendTestEmail() {
 		const response = result.getResponseText(); // this is the list of target email address(es)
 		allEmails.push(response); // push them to allEmails for processing.
 
-		sendEmails(testUser, allEmails, subject); // send email for that user and mark as having been sent.
+		sendEmails(testUser, allEmails, subject, formattedBCC); // send email for that user and mark as having been sent.
 
 		return true;
 	}
