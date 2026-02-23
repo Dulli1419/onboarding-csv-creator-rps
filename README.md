@@ -1,52 +1,34 @@
-# apps-script-template
-This is a blank project to use as a starting point for future Google Apps Scripts projects.
+# AD / ArgoNet Auto Import Scripts
+This is a series of tools used to automate and track the creation of new accounts across all systems at RPS. It's specifically designed to create student accounts over the summer, but can be used at any time.
 	
 ## Where Hosted
-N/A
+Google Apps Script / Google Sheets (it's specifically tied to a Google Sheet)
 
 ## How to Use
-First - Make sure to have both npm and node.js installed (installing node should automatically install npm).  Node.js is available here: https://nodejs.org/en/download/
 
-Duplicate the repository by clicking "Use this template" on the web interface (https://github.com/Dulli1419/apps-script-template) and then select "Create a new repository".  Once created clone it to your workspace to get started.
-
-After you clone the new repository make sure to run 
-```
-npm init
-```
-from terminal, wiithin the directory, to update the package.json file as is appropriate.
-
-finally run
-```
-npm install
-```
-from terminal, within the directory, to quickly install all dependencies listed in package.json
-
-NOTE: the .gitignore file includes a reservation for a directory called "localDev".  Create that directory as a quick place to keep all of your files that you want kept local only.
-
-Note: the .gitignore also excludes the node_modules folder.  You may want to remove this from the .gitignore from your project but that folder will be populated by package.json when your run
-```
-npm install
-```
-so it didn't seem necessary to keep it as part of the repository in the template.
-
-Also note that this file brings in basic configurations to start working with CLASP.  To pull in your Google Apps Script Projcet run
-```
-clasp login //only needed if you are not authenticated against your GAS account
-clasp clone GASPROJECT_ID
-```
-When your clone the project from GAS any files with the same name (as in code.js) will be overwritten with the version from GAS, but other nothing will be deleted.  CLASP auto converts .gs files to .js for local development and vice versa so you don't need to worry about managing that.
 
 ## Built For
-Personal Use, quick starting development.
+RPS Tech Department
 
 ## Schedule
-N/A
+Most functions are on demand.
+
+enrollAlertCompile() runs once daily at 10am. This updates the sheet with new enrollment info and populates new info for use in account creation. It also triggers an automatic email alert in the event that there is an enrollment change, in order to ensure everyone is aware that it occurred.
 
 ## Authentication
-N/A
+Exporting the CSV for use in updating Active Directory requires, only, that you have access to the spreadsheet. Although, you'll also need the corresponding Powershell scripts for those CSVs to be of any use.
+
+The following 5 functions are added to the sheet automatically when you open it (in a drop down). The permissions for each are as follows:
+
+Update Student Info
+Update ArgoNet - Platform Manager
+Send Emails to Students
+Send Test Email
+Reset Sheet
 
 ## Users Given Access
-N/A
+narduli@rutgersprep.org
+All users in Tech Shared Drive
 
 ## Dependencies
 npm & node.js - other dependencies as listed in package.json
@@ -58,7 +40,9 @@ npm i @google/clasp -g
 A short tutorial on clasp can be found here: https://medium.com/geekculture/how-to-write-google-apps-script-code-locally-in-vs-code-and-deploy-it-with-clasp-9a4273e2d018
 
 ## Endpoints
-None
+Blackbaud SKY API - School - User update
+Blackbaud SKY API - School - Users custom fields create
+Blackbaud SKY API - School - Users custom fields update
 
 ## Advanced Lists
 None
